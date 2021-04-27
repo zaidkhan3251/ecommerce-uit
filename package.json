@@ -1,0 +1,22 @@
+{
+  "name": "ecomerce-uit",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zaidkhan3251/ecommerce-uit.git"
+  },
+  "author": "",
+  "license": "ISC",
+    "url": "https://github.com/zaidkhan3251/ecommerce-uit/issues"
+  },
+  "homepage": "https://github.com/zaidkhan3251/ecommerce-uit#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
