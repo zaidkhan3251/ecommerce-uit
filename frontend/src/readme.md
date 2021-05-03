@@ -1,0 +1,1 @@
+to create a redux store we need two thing a reducer and initial state
