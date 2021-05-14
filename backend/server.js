@@ -6,17 +6,16 @@ app.get('/',(req,res)=>{
     res.send("server is ready")
 })
 app.get('/api/products/:id',(req,res)=>{
-    res.send("product detail is ready ")
-    // const product=data.products.find((x)=> x._id === req.params.id)
-    // if(product){
-    //     res.send(product)
-    // }
-    // else{
-    //     res.status(404).send({message:"Product Not Found"})
-    // }
+    const product=data.products.find((x)=> x._id === req.params.id)
+    if(product){
+        res.send(product)
+    }
+    else{
+        res.status(404).send({message:"Product Not Found"})
+    }
     
 })
-app.get('/api/products/1',(req,res)=>{
+app.get('/api/products',(req,res)=>{
     res.send(data.products)
 })
 app.listen(5000,()=>{
