@@ -4,7 +4,13 @@ import thunk from 'redux-thunk';
 import { cartReducers } from "./reducers/cartReducers";
 import {productDetailsRducer, productListRducer} from './reducers/productReducers'
 
-const initialState={}
+const initialState={
+    cart: {
+        cartItems:localStorage.getItem('cartItems')
+        ? JSON.parse(localStorage.getItem('cartItems'))
+        : [],
+    }
+}
 const reducer=combineReducers({
     productList: productListRducer,
     productDetails:productDetailsRducer,
