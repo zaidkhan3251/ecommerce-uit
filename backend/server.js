@@ -4,14 +4,17 @@ import cors from "cors";
 import userRouter from "./routers/userRouter.js";
 import dotenv from "dotenv";
 import productRouter from "./routers/productRouter.js";
+import categoryRouter from "./routers/categoryRouter.js";
+import uploadRouter from "./routers/uploadRouter.js";
 dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-const DB =
-  "mongodb+srv://dbestore:dbestore123@cluster0.yvc0f.mongodb.net/estoredb?retryWrites=true&w=majority";
+const DB ="mongodb+srv://dbestore:dbestore123@cluster0.yvc0f.mongodb.net/estoredb?retryWrites=true&w=majority"
+// const DB ="mongodb+srv://dbestore:dbestore123@cluster0.yvc0f.mongodb.net/estoredb?retryWrites=true&w=majority";
+// const DB ="mongodb+srv://testing123:321testing@cluster0.vtdsb.mongodb.net/testingdb?retryWrites=true&w=majority";
 // data base user&password
-// dbestore
+// dbestore 
 // dbestore123
 
 mongoose
@@ -27,9 +30,13 @@ app.use(cors("*"));
 app.get("/", (req, res) => {
   res.send("server is ready");
 });
+app.use("/uploads", express.static('uploads'))
 app.use("/api/users", userRouter);
-
 app.use("/api/products", productRouter);
+app.use("/api/categories", categoryRouter);
+app.use('/api/uploads', uploadRouter);
+
+
 
 app.use((err, req, res, next) => {
   res.status(500).send({ message: err.message });
