@@ -118,6 +118,37 @@ ul {
 li {
   margin-top: 1rem;
 }
+li.seller_sec{
+  border-radius: 2.5rem;
+  margin: 1rem;
+  box-shadow: 4px 6px 10px #888888;
+
+}
+.prod_det{
+  padding: 10px;
+}
+li.Seller_Info{
+  padding: 10px;
+  display: flex;
+
+  justify-content: space-between;
+  flex: 1;
+  flex-direction: row;
+}
+li.sellerDesc{
+  font-size: small;
+  padding: 10px;
+ 
+}
+
+
+
+img.Seller_img{
+  height: 30px;
+  width: 30px;
+  border-radius: 50px;
+}
+
 input,
 select,
 textarea,
@@ -324,7 +355,7 @@ button.open-sidebar {
   cursor: pointer;
 }
 button.open-sidebar:hover {
-  border-color: #ffffff;
+  border-color: #776d6d;
 }
 aside ul {
   padding: 0;

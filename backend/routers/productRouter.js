@@ -52,6 +52,9 @@ productRouter.get('/:id',expressAsyncHandler(async(req,res)=>{
 if(user.isAdmin||user.isSeller){
   const product = new Product({
         name: req.body.name,
+        sellerName:user.seller.name,
+        sellerLogo:user.seller.logo,
+        sellerDesc:user.seller.description,
         seller: req.user._id,
         image: req.body.image,
         price: req.body.price,

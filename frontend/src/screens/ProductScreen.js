@@ -10,14 +10,14 @@ export default function ProductScreen(props) {
   const productDetails = useSelector((state) => state.productDetails);
   const { loading, error, product } = productDetails;
   const productId = props.match.params.id;
-  const [qty, setQty] = useState(1)
+  const [qty, setQty] = useState(1);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(detailsProduct(productId));
-  }, [dispatch,productId]);
-  const addToCartHandler=()=>{
-    props.history.push(`/cart/${productId}?qty=${qty}`)
-  }
+  }, [dispatch, productId]);
+  const addToCartHandler = () => {
+    props.history.push(`/cart/${productId}?qty=${qty}`);
+  };
 
   return (
     <div>
@@ -36,7 +36,7 @@ export default function ProductScreen(props) {
                 alt={product.name}
               ></img>
             </div>
-            <div className="col-1">
+            <div className="col-1 prod_det">
               <ul>
                 <li>
                   <h1>{product.name}</h1>
@@ -47,10 +47,23 @@ export default function ProductScreen(props) {
                     numReviews={product.numReviews}
                   ></Rating>
                 </li>
-                <li>Pirce : ${product.price}</li>
                 <li>
-                  Description:
+                  <h4>Pirce : ${product.price}</h4>
+                </li>
+                <li>
+                  <h5>Description:</h5>
+
                   <p>{product.description}</p>
+                </li>
+                <li className="seller_sec ">
+                <li className="Seller_Info">
+                  <img className="Seller_img" src={product.sellerLogo} alt="seller image" />
+                  <h4>{product.sellerName}</h4>
+                </li>
+                <li className="sellerDesc">
+                  <h5>About Seller</h5>
+                  <p>{product.sellerDesc}</p>
+                </li>
                 </li>
               </ul>
             </div>
@@ -75,32 +88,36 @@ export default function ProductScreen(props) {
                       </div>
                     </div>
                   </li>
-                  {
-                    product.countInStock > 0 && (
-                      <>
+                  {product.countInStock > 0 && (
+                    <>
                       <div className="row">
+                        <div>Qty</div>
                         <div>
-                          Qty
-                        </div>
-                        <div>
-                          <select value={qty} onChange={e=>setQty(e.target.value)}>
-                            {
-                              [...Array(product.countInStock).keys()].map(
-                                (x)=>(<option
-                                  key={x+1} value={x+1}> {x+1}</option>)
+                          <select
+                            value={qty}
+                            onChange={(e) => setQty(e.target.value)}
+                          >
+                            {[...Array(product.countInStock).keys()].map(
+                              (x) => (
+                                <option key={x + 1} value={x + 1}>
+                                  {" "}
+                                  {x + 1}
+                                </option>
                               )
-                            }
+                            )}
                           </select>
                         </div>
                       </div>
                       <li>
-                    <button className="primary block" onClick={addToCartHandler} >Add to Cart</button>
-                  </li>
-                      </>
-                    
-                  )
-                  }
-                  
+                        <button
+                          className="primary block"
+                          onClick={addToCartHandler}
+                        >
+                          Add to Cart
+                        </button>
+                      </li>
+                    </>
+                  )}
                 </ul>
               </div>
             </div>
