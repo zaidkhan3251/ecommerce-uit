@@ -1,0 +1,43 @@
+{
+  "name": "ecomerce-uit",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "engines": {
+    "node": "14.x",
+    "npm": "6.14.8"
+},
+  "scripts": {
+    "start": "nodemon --watch backend --exec node --experimental-modules server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zaidkhan3251/ecommerce-uit.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zaidkhan3251/ecommerce-uit/issues"
+  },
+  "homepage": "https://github.com/zaidkhan3251/ecommerce-uit#readme",
+  "dependencies": {
+    "@material-ui/core": "^4.11.4",
+    "@material-ui/icons": "^4.11.2",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-async-handler": "^1.1.4",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.12.9",
+    "multer": "^1.4.3",
+    "nodemon": "^2.0.7",
+    "react-transition-group": "^4.4.2",
+    "slugify": "^1.5.3"
+  },
+  "devDependencies": {
+    "eslint": "^7.25.0",
+    "eslint-plugin-react": "^7.23.2"
+  }
+}

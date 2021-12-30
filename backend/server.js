@@ -9,15 +9,10 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-const DB ="mongodb+srv://dbestore:dbestore123@cluster0.yvc0f.mongodb.net/estoredb?retryWrites=true&w=majority"
-// const DB ="mongodb+srv://dbestore:dbestore123@cluster0.yvc0f.mongodb.net/estoredb?retryWrites=true&w=majority";
-// const DB ="mongodb+srv://testing123:321testing@cluster0.vtdsb.mongodb.net/testingdb?retryWrites=true&w=majority";
-// data base user&password
-// dbestore 
-// dbestore123
+
 
 mongoose
-  .connect(process.env.MONGODB_URL || DB, {
+  .connect(process.env.MONGODB_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
@@ -39,7 +34,7 @@ app.use("/api/categories", categoryRouter);
 app.use((err, req, res, next) => {
   res.status(500).send({ message: err.message });
 });
-const port = 5000;
+const port = process.env.PORT ||5000;
 app.listen(port, () => {
   console.log("server at http://localhost:5000");
 });
