@@ -5,7 +5,6 @@ import userRouter from "./routers/userRouter.js";
 import dotenv from "dotenv";
 import productRouter from "./routers/productRouter.js";
 import categoryRouter from "./routers/categoryRouter.js";
-import uploadRouter from "./routers/uploadRouter.js";
 dotenv.config();
 const app = express();
 app.use(express.json());
@@ -34,7 +33,6 @@ app.use("/uploads", express.static('uploads'))
 app.use("/api/users", userRouter);
 app.use("/api/products", productRouter);
 app.use("/api/categories", categoryRouter);
-app.use('/api/uploads', uploadRouter);
 
 
 

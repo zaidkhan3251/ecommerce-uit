@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Axios from 'axios';
 import { createProduct, listProductCategories } from '../actions/ProductActions';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
-
+import {storage} from '../firebase'
+import {getDownloadURL, ref, uploadBytesResumable} from "firebase/storage";
 export default function ProductCreateScreen(props) {
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
-    const [image, setImage] = useState('');
     const [category, setCategory] = useState('SELECT CATEGORY');
     const [countInStock, setCountInStock] = useState('');
     const [brand, setBrand] = useState('');
     const [description, setDescription] = useState('');
+    const [purl, setPurl] = useState("");
+    const [file,setFile]= useState()
 
     const productCategoryList = useSelector((state) => state.productCategoryList);
     const {
@@ -37,27 +38,58 @@ export default function ProductCreateScreen(props) {
       if (successCreate) {
         props.history.push('/productlist');
       }
+      if(!file){
+        return
+      }
+      const filereader= new FileReader();
+      filereader.onload=()=>{
+        setPurl(filereader.result)
+      }
+      filereader.readAsDataURL(file)
       
-    }, [dispatch,successCreate, props.history]);
+    }, [dispatch,successCreate, props.history,file]);
 
 
 
     const submitHandler =(e) =>{
       e.preventDefault();
       
-      dispatch(
-        createProduct({
-          name,
-          price,
-          category,
-          brand,
-          countInStock,
-          description,
-          image,
-        })
-      );
+      const sotrageRef = ref(storage, `productImages/${file.name}`);
+    const uploadTask = uploadBytesResumable(sotrageRef, file);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        
+
+      },
+      (error) => console.log(error),
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          
+    dispatch(
+      createProduct({
+        name,
+        price,
+        category,
+        brand,
+        countInStock,
+        description,
+        image:downloadURL,
+      })
+    );
+
+        });
+      }
+     
+      
+    );
+    
     };
 
+    function pickedHandler(e){
+      const Pickedfile = e.target.files[0];
+      setFile(Pickedfile)}   
     
 
     const [loadingUpload, setLoadingUpload] = useState(false);
@@ -68,35 +100,10 @@ export default function ProductCreateScreen(props) {
     const { userInfo } = userSignin;
 
 
-    const uploadFileHandler = async (e) => {
-      const file = e.target.files[0];
-      const bodyFormData = new FormData();
-      bodyFormData.append('image', file);
-      setLoadingUpload(true);
-      try {
-        const { data } = await Axios.post('/api/uploads', bodyFormData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${userInfo.token}`,
-          },
-        });
-        setImage(data);
-        console.log(data)
-        setLoadingUpload(false);
-      } catch (error) {
-        setErrorUpload(error.message);
-        setLoadingUpload(false);
-      }
-    };
-  
-  
+    
 
     return (
         <div>
-         
-        
-
-        
       <form className="form" onSubmit={submitHandler}>
         
         {loadingCreate && <LoadingBox></LoadingBox>}
@@ -128,9 +135,9 @@ export default function ProductCreateScreen(props) {
                 type="file"
                 id="imageFile"
                 label="Choose product iamge"
-                onChange={uploadFileHandler}
+                onChange={pickedHandler}
               ></input>
-              {image?(<img src={image} alt="product_image"/>):(<></>)}
+              {purl?(<img src={purl} alt="product_image"/>):(<></>)}
           
               {loadingUpload && <LoadingBox></LoadingBox>}
               {errorUpload && (
@@ -143,12 +150,7 @@ export default function ProductCreateScreen(props) {
               {categories&& categories.map((c,index) => (<option key={index} value={c.name}> {c.name}</option>))
                             }
                           </select>
-                          
-
-
-
-              
-            </div>
+                          </div>
             <div>
               <label htmlFor="brand">Brand</label>
               <input

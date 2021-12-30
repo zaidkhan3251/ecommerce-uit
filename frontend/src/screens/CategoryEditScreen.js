@@ -7,6 +7,8 @@ import {
   updateCategory,
   listProductCategories,
 } from "../actions/ProductActions";
+import {storage} from '../firebase'
+import {getDownloadURL, ref, uploadBytesResumable} from "firebase/storage";
 import LoadingBox from "../components/LoadingBox";
 import MessageBox from "../components/MessageBox";
 import { Link } from "react-router-dom";
@@ -20,9 +22,10 @@ export default function CategoryEditScreen(props) {
   const [loadingUpload, setLoadingUpload] = useState(false);
   const [errorUpload, setErrorUpload] = useState('');
   const [name, setName] = useState("");
-  const [image, setImage] = useState('');
   const [updateName, setUpdateName] = useState("");
   const [isEdit, setIsEdit] = useState(null);
+  const [purl, setPurl] = useState("");
+  const [file,setFile]= useState()
   const dispatch = useDispatch();
 
   const productCategoryList = useSelector((state) => state.productCategoryList);
@@ -53,13 +56,14 @@ export default function CategoryEditScreen(props) {
     if (successUpdate) {
         dispatch({ type: CATEGORY_UPDATE_RESET });}
         dispatch(listProductCategories())
-
-
-
-
-    // if (successCreate) {
-    //   props.history.push("/category");
-    // }
+        if(!file){
+          return
+        }
+        const filereader= new FileReader();
+        filereader.onload=()=>{
+          setPurl(filereader.result)
+        }
+        filereader.readAsDataURL(file)
     if (successCreate) {
       dispatch({ type: CATEGORY_CREATE_RESET });
     }
@@ -74,13 +78,39 @@ export default function CategoryEditScreen(props) {
     successCreate,
     successDelete,
     successUpdate,
+    file,
     // userInfo._id,
   ]);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    dispatch(createCategory({ name,image }));
-  };
+    const sotrageRef = ref(storage, `categoryImages/${file.name}`);
+    const uploadTask = uploadBytesResumable(sotrageRef, file);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        
+
+      },
+      (error) => console.log(error),
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          
+          dispatch(createCategory({ name,image:downloadURL}));
+          setPurl("");
+          setName("")
+          setFile();
+
+        });
+      }
+     
+      
+    );  };
+
+    function pickedHandler(e){
+      const Pickedfile = e.target.files[0];
+      setFile(Pickedfile)} 
   const deleteHandler = (category) => {
     if (window.confirm("Are you sure to delete?")) {
       dispatch(deleteCategory(category._id));
@@ -101,30 +131,9 @@ export default function CategoryEditScreen(props) {
   };
  
   
-    
-    const userSignin = useSelector((state) => state.userSignin);
-    const { userInfo } = userSignin;
+ 
 
-  const uploadFileHandler = async (e) => {
-    const file = e.target.files[0];
-    const bodyFormData = new FormData();
-    bodyFormData.append('image', file);
-    setLoadingUpload(true);
-    try {
-      const { data } = await Axios.post('/api/uploads', bodyFormData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${userInfo.token}`,
-        },
-      });
-      setImage(data);
-      console.log(data)
-      setLoadingUpload(false);
-    } catch (error) {
-      setErrorUpload(error.message);
-      setLoadingUpload(false);
-    }
-  };
+  
 
 
   return (
@@ -134,7 +143,7 @@ export default function CategoryEditScreen(props) {
           <h1>Manage Categories</h1>
         </div>
 
-        {loadingDelete && <LoadingBox></LoadingBox>}
+        {loadingDelete||loadingCreate && <LoadingBox></LoadingBox>}
         {errorDelete && <MessageBox variant="danger">{errorDelete}</MessageBox>}
         {loadingUpdate && <LoadingBox></LoadingBox>}
         {errorUpdate && <MessageBox variant="danger">{errorUpdate}</MessageBox>}
@@ -162,9 +171,9 @@ export default function CategoryEditScreen(props) {
                 type="file"
                 id="imageFile"
                 label="Choose Category Image"
-                onChange={uploadFileHandler}
+                onChange={pickedHandler}
               ></input>
-              {image?(<img src={image} alt="product_image"/>):(<></>)}
+              {purl?(<img src={purl} alt="product_image"/>):(<></>)}
           
               {loadingUpload && <LoadingBox></LoadingBox>}
               {errorUpload && (
