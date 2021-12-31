@@ -33,7 +33,7 @@ export const listProduct = ({category='',seller = '',}) => async (dispatch) => {
     type: PRODUCT_LIST_REQUEST,
   });
   try {
-    const { data } = await Axios.get(`/api/products?category=${category}&seller=${seller}`
+    const { data } = await Axios.get(`${process.env.REACT_APP_API_URL}/api/products?category=${category}&seller=${seller}`
     );
     dispatch({
       type: PRODUCT_LIST_SUCCESS,
@@ -52,7 +52,7 @@ export const detailsProduct = (productId) => async (dispatch) => {
     payload: productId,
   });
   try {
-    const { data } = await Axios.get(`/api/products/${productId}`);
+    const { data } = await Axios.get(`${process.env.REACT_APP_API_URL}/api/products/${productId}`);
     dispatch({
       type: PRODUCT_DETAIL_SUCCESS,
       payload: data,
@@ -73,7 +73,7 @@ export const listProductCategories = () => async (dispatch) => {
     type: PRODUCT_CATEGORY_LIST_REQUEST,
   });
   try {
-    const  {data}  = await Axios.get(`/api/categories`);
+    const  {data}  = await Axios.get(`${process.env.REACT_APP_API_URL}/api/categories`);
     dispatch({ type: PRODUCT_CATEGORY_LIST_SUCCESS, payload: data });
   } catch (error) {
     dispatch({ type: PRODUCT_CATEGORY_LIST_FAIL, payload: error.message });
@@ -88,7 +88,7 @@ export const createProduct = (product) => async (dispatch, getState) => {
   console.log("Product Action yahan se====>>>",userInfo.isSeller)
   try {
     const { data } = await Axios.post(
-      "/api/products/productcreate",product,
+      `${process.env.REACT_APP_API_URL}/api/products/productcreate`,product,
       {
         headers: { Authorization: `Bearer ${userInfo.token}` },
       }
@@ -111,7 +111,7 @@ export const updateProduct = (product) => async (dispatch, getState) => {
     userSignin: { userInfo },
   } = getState();
   try {
-    const { data } = await Axios.put(`/api/products/${product._id}`, product, {
+    const { data } = await Axios.put(`${process.env.REACT_APP_API_URL}/api/products/${product._id}`, product, {
       headers: { Authorization: `Bearer ${userInfo.token}` },
     });
     dispatch({ type: PRODUCT_UPDATE_SUCCESS, payload: data });
@@ -129,7 +129,7 @@ export const deleteProduct = (productId) => async (dispatch, getState) => {
     userSignin: { userInfo },
   } = getState();
   try {
-    const { data } = Axios.delete(`/api/products/${productId}`, {
+    const { data } = Axios.delete(`${process.env.REACT_APP_API_URL}/api/products/${productId}`, {
       headers: { Authorization: `Bearer ${userInfo.token}` },
     });
     dispatch({ type: PRODUCT_DELETE_SUCCESS });
@@ -148,7 +148,7 @@ export const createCategory = (category) => async (dispatch, getState) => {
   } = getState();
   try {
     const { data } = await Axios.post(
-      "/api/categories/create",category,
+      `${process.env.REACT_APP_API_URL}/api/categories/create`,category,
      
       {
         headers: { Authorization: `Bearer ${userInfo.token}` },
@@ -173,7 +173,7 @@ export const updateCategory = (category) => async (dispatch, getState) => {
   } = getState();
   console.log(category._id,category.name)
   try {
-    const { data } = await Axios.put(`/api/categories/${category._id}`, category,
+    const { data } = await Axios.put(`${process.env.REACT_APP_API_URL}/api/categories/${category._id}`, category,
     {
       headers: { Authorization: `Bearer ${userInfo.token}` },
     }
@@ -193,7 +193,7 @@ export const deleteCategory = (categoryId) => async (dispatch, getState) => {
     userSignin: { userInfo },
   } = getState();
   try {
-    const { data } = Axios.delete(`/api/categories/${categoryId}`
+    const { data } = Axios.delete(`${process.env.REACT_APP_API_URL}/api/categories/${categoryId}`
     ,
      {
       headers: { Authorization: `Bearer ${userInfo.token}` },
