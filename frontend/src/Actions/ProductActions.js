@@ -209,3 +209,4 @@ export const deleteCategory = (categoryId) => async (dispatch, getState) => {
   }
 };
 
+// not affected
