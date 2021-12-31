@@ -5,6 +5,8 @@ import LoadingBox from '../components/LoadingBox';
 import Axios from "axios";
 import MessageBox from "../components/MessageBox";
 import { USER_UPDATE_PROFILE_RESET } from '../constants/userConstant';
+import {storage} from '../firebase'
+import {getDownloadURL, ref, uploadBytesResumable} from "firebase/storage";
 
 export default function ProfileScreen() {
   const [name, setName] = useState('');
@@ -16,6 +18,8 @@ export default function ProfileScreen() {
   const [sellerDescription, setSellerDescription] = useState('');
   const [loadingUpload, setLoadingUpload] = useState(false);
   const [errorUpload, setErrorUpload] = useState('');
+  const [purl, setPurl] = useState("");
+  const [file,setFile]= useState()
 
   const userSignin = useSelector((state) => state.userSignin);
   const { userInfo } = userSignin;
@@ -41,47 +45,107 @@ export default function ProfileScreen() {
         setSellerDescription(user.seller.description);
       }
     }
-  }, [dispatch, userInfo._id, user]);
-  const submitHandler = (e) => {
+    if(!file){
+      return
+    }
+    const filereader= new FileReader();
+    filereader.onload=()=>{
+      setPurl(filereader.result)
+    }
+    filereader.readAsDataURL(file)
+    
+  }, [dispatch, userInfo._id, user,file]);
+
+
+
+
+
+
+
+
+
+
+  const submitHandler =(e) =>{
     e.preventDefault();
-    // dispatch update profile
     if (password !== confirmPassword) {
       alert('Password and Confirm Password Are Not Matched');
-    } else {
-      dispatch(
-        updateUserProfile({
-          userId: user._id,
-          name,
-          email,
-          password,
-          sellerName,
-          sellerLogo,
-          sellerDescription,
-        })
-      );
     }
-  };
-  const uploadFileHandler = async (e) => {
-    const file = e.target.files[0];
-    const bodyFormData = new FormData();
-    bodyFormData.append('image', file);
-    setLoadingUpload(true);
-    try {
-      const { data } = await Axios.post('/api/uploads', bodyFormData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${userInfo.token}`,
-        },
-      });
-      setSellerLogo(data);
-      console.log(data)
-      setLoadingUpload(false);
-    } catch (error) {
-      setErrorUpload(error.message);
-      setLoadingUpload(false);
-    }
-  };
+    else{
+    const sotrageRef = ref(storage, `productImages/${file.name}`);
+  const uploadTask = uploadBytesResumable(sotrageRef, file);
 
+  uploadTask.on(
+    "state_changed",
+    (snapshot) => {
+      
+
+    },
+    (error) => console.log(error),
+    () => {
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        
+        dispatch(
+          updateUserProfile({
+            userId: user._id,
+            name,
+            email,
+            password,
+            sellerName,
+            sellerLogo:downloadURL,
+            sellerDescription,
+          })
+        );
+
+      });
+    }
+   
+    
+  );}
+  
+  };
+  // const submitHandler = (e) => {
+  //   e.preventDefault();
+  //   // dispatch update profile
+  //   if (password !== confirmPassword) {
+  //     alert('Password and Confirm Password Are Not Matched');
+  //   } else {
+  //     dispatch(
+  //       updateUserProfile({
+  //         userId: user._id,
+  //         name,
+  //         email,
+  //         password,
+  //         sellerName,
+  //         sellerLogo,
+  //         sellerDescription,
+  //       })
+  //     );
+  //   }
+  // };
+  // const uploadFileHandler = async (e) => {
+  //   const file = e.target.files[0];
+  //   const bodyFormData = new FormData();
+  //   bodyFormData.append('image', file);
+  //   setLoadingUpload(true);
+  //   try {
+  //     const { data } = await Axios.post('/api/uploads', bodyFormData, {
+  //       headers: {
+  //         'Content-Type': 'multipart/form-data',
+  //         Authorization: `Bearer ${userInfo.token}`,
+  //       },
+  //     });
+  //     setSellerLogo(data);
+  //     console.log(data)
+  //     setLoadingUpload(false);
+  //   } catch (error) {
+  //     setErrorUpload(error.message);
+  //     setLoadingUpload(false);
+  //   }
+  // };
+  function pickedHandler(e){
+    const Pickedfile = e.target.files[0];
+    setFile(Pickedfile)}   
+  
 
 
   return (
@@ -162,9 +226,9 @@ export default function ProfileScreen() {
                 type="file"
                 id="sellerLogo"
                 label="Choose Seller Logo"
-                onChange={uploadFileHandler}
+                onChange={pickedHandler}
               ></input>
-              {sellerLogo?(<img src={sellerLogo} alt="product_image"/>):(<></>)}
+              {purl?<img src={purl} alt=""/>:<></>}
           
               {loadingUpload && <LoadingBox></LoadingBox>}
               {errorUpload && (

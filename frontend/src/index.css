@@ -700,8 +700,30 @@ img.large {
 
 
 
-@media (max-width: 480px){
-  .grid-container {
+@media screen and (max-width: 768px){
+  .banner {
+    height: 30vh;
+    width: 100wh;
+    justify-content: center;
+    align-items: center;
+    justify-content: center;
+      display: flex;
+      align-items: center;
+      
+    
+  }
+  .banner  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    margin-top: -50px;
+  }
+  header {
+    margin-top: 0px;
+    height: 100px;
+  }
+  
+    .grid-container {
     display: grid;
     grid-template-areas:
       'header'
@@ -711,8 +733,8 @@ img.large {
     grid-template-rows: 10rem 1fr 15rem;
     height: 100%;
   }
-  .header__right{
-    margin-left: 15.5rem;
+  .header__left{
+    margin-top: .8rem;
   }
   .explore,.signin,.avatar,.cart_icon{
     margin-top: 0rem;
